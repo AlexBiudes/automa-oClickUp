@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BI Performance - Painel de Controle de Validação</title>
+    <!-- Google Fonts Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- SECTION: AUTHENTICATION CONTAINER (LOGIN) -->
+    <div id="login-container" class="auth-wrapper">
+        <div class="auth-card">
+            <div class="brand-header">
+                <div class="logo-area">
+                    <span class="logo-symbol">⎔</span>
+                    <span class="logo-text">Planning</span>
+                </div>
+                <div class="brand-tagline">Building your company's future. <strong class="text-green">Today.</strong></div>
+            </div>
+            
+            <hr class="highlight-line">
+            
+            <h2>Acesso ao Painel</h2>
+            <p class="auth-subtitle">Digite seu e-mail corporativo para receber um código de acesso.</p>
+            
+            <div class="alert-box error" id="login-error" style="display: none;"></div>
+            <div class="alert-box success" id="login-success" style="display: none;"></div>
+
+            <!-- Email Form -->
+            <form id="email-form">
+                <div class="form-group">
+                    <label for="user-email">E-mail Corporativo</label>
+                    <input type="email" id="user-email" placeholder="nome.sobrenome@planning.com.br" required>
+                </div>
+                <button type="submit" class="btn btn-primary" id="btn-send-otp">Solicitar Código</button>
+            </form>
+
+            <!-- OTP Form (Hidden initially) -->
+            <form id="otp-form" style="display: none;">
+                <div class="form-group">
+                    <label for="otp-code">Código de Acesso (6 dígitos)</label>
+                    <input type="text" id="otp-code" maxlength="6" placeholder="000000" required>
+                    <span class="helper-text">Se o servidor não tiver SMTP configurado, o código de homologação estará gravado em <code>data/otp_debug.log</code>.</span>
+                </div>
+                <button type="submit" class="btn btn-green" id="btn-verify-otp">Entrar no Painel</button>
+                <button type="button" class="btn btn-link" id="btn-back-email">Voltar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SECTION: MAIN DASHBOARD WRAPPER -->
+    <div id="dashboard-wrapper" style="display: none;">
+        <!-- Header executivo -->
+        <header class="exec-header">
+            <div class="header-logo">
+                <span class="logo-symbol">⎔</span>
+                <span class="logo-text">Planning</span>
+                <span class="page-title">| BI Performance</span>
+            </div>
+            
+            <div class="header-actions">
+                <span id="user-display" class="user-badge">administrador@planning.com.br</span>
+                <button class="btn-logout" id="btn-logout">Sair</button>
+            </div>
+        </header>
+
+        <!-- Linha de destaque verde para ciano -->
+        <div class="gradient-line"></div>
+
+        <!-- Dashboard Layout Container -->
+        <main class="dashboard-content">
+            
+            <!-- CONTROLLER BAR (Liga/Desliga e Forçar Validação) -->
+            <section class="control-panel-grid">
+                <!-- Switch Toggle Box -->
+                <div class="glass-card toggle-card">
+                    <div class="toggle-info">
+                        <h3>Status do Validador Contábil</h3>
+                        <p>Ative ou desative o motor de checagem do ClickUp.</p>
+                    </div>
+                    <div class="toggle-action-wrapper">
+                        <span class="status-indicator active" id="status-indicator"></span>
+                        <span class="status-label" id="status-label">Online</span>
+                        <label class="switch">
+                            <input type="checkbox" id="motor-toggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Force Validate Manual Box -->
+                <div class="glass-card force-card">
+                    <h3>Forçar Validação Manual</h3>
+                    <p>Valide um card específico do Kanban digitando seu ID abaixo.</p>
+                    <form id="force-validate-form" class="inline-form">
+                        <input type="text" id="force-task-id" placeholder="Ex: 86e25dnb8" required>
+                        <button type="submit" class="btn btn-primary" id="btn-force-validate">Validar Card</button>
+                    </form>
+                    <div id="force-result" class="inline-result"></div>
+                </div>
+            </section>
+
+            <!-- Cards principais de KPI -->
+            <section class="kpi-grid">
+                <!-- KPI 1 -->
+                <div class="kpi-card">
+                    <div class="kpi-title">Processados Hoje</div>
+                    <div class="kpi-value" id="kpi-today">0</div>
+                    <div class="kpi-footer">Atualizado em tempo real</div>
+                </div>
+                <!-- KPI 2 -->
+                <div class="kpi-card">
+                    <div class="kpi-title">Total de Validações</div>
+                    <div class="kpi-value" id="kpi-total">0</div>
+                    <div class="kpi-footer">Histórico acumulado no container</div>
+                </div>
+                <!-- KPI 3 -->
+                <div class="kpi-card">
+                    <div class="kpi-title">Taxa de Sucesso Contábil</div>
+                    <div class="kpi-value" id="kpi-rate">100%</div>
+                    <div class="kpi-footer">Sem divergências nas rubricas</div>
+                </div>
+                <!-- KPI 4 -->
+                <div class="kpi-card">
+                    <div class="kpi-title">Tempo Médio de Resposta</div>
+                    <div class="kpi-value" id="kpi-time">0 ms</div>
+                    <div class="kpi-footer">Processamento paralelo ativo</div>
+                </div>
+            </section>
+
+            <!-- Main Workspace Columns -->
+            <div class="workspace-grid">
+                <!-- Column Left: History Table -->
+                <section class="workspace-main">
+                    <div class="glass-card table-card">
+                        <div class="card-header">
+                            <h3>Histórico de Execuções Recentes</h3>
+                            <button class="btn btn-sm btn-outline" id="btn-refresh-history">Atualizar Lista</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="audit-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data/Hora</th>
+                                        <th>Card ID</th>
+                                        <th>Empresa / CNPJ</th>
+                                        <th>Período</th>
+                                        <th>Tempo</th>
+                                        <th>Status</th>
+                                        <th>Erros Encontrados</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-tbody">
+                                    <tr>
+                                        <td colspan="7" class="loading-td">Carregando histórico...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Column Right: Admin User Management -->
+                <section class="workspace-side">
+                    <div class="glass-card user-mgmt-card">
+                        <h3>Acessos Autorizados (@planning.com.br)</h3>
+                        <p class="subtitle">Apenas e-mails na lista abaixo podem acessar o painel.</p>
+                        
+                        <div class="user-list-wrapper">
+                            <ul class="user-list" id="users-ul">
+                                <li>Carregando acessos...</li>
+                            </ul>
+                        </div>
+                        
+                        <form id="invite-user-form" class="stack-form">
+                            <div class="form-group">
+                                <label for="invite-email">Convidar Colaborador</label>
+                                <input type="email" id="invite-email" placeholder="colaborador@planning.com.br" required>
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-green" id="btn-invite-user">Adicionar Acesso</button>
+                        </form>
+                        <div id="invite-result" class="inline-result"></div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Caixa de considerações ou alertas (Verde Suave / Alerta) -->
+            <section class="footer-alert-section">
+                <div class="info-alert-box">
+                    <span class="alert-icon">💡</span>
+                    <div class="alert-content">
+                        <h4>Diretriz de Conformidade e Ingestão contábil</h4>
+                        <p>O validador atua diretamente na esteira de integração do Kanban ClickUp para BigQuery. Para garantir a segurança dos dados corporativos, nenhuma tabela do BigQuery é criada ou modificada por esta interface administrativa. Todo o controle de status e histórico de auditoria são mantidos de forma local e isolada.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <footer class="brand-footer-text">
+        Planning S/A © 2026. Building your company's future. Today.
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

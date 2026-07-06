@@ -25,5 +25,6 @@ COPY specs/ /app/specs/
 # Port for Cloud Run / HTTP Server
 EXPOSE 8080
 
-# Command to run on container start (starts HTTP server by default)
-CMD ["python", "src/main.py", "--server"]
+# Command to run on container start (starts Flask Web server by default)
+CMD ["python", "src/server.py"]
+

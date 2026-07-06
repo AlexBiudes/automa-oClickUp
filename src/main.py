@@ -3,6 +3,7 @@ import sys
 import argparse
 import logging
 import json
+import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import src.config as config
 from src.connectors.clickup_client import ClickUpClient
@@ -11,6 +12,7 @@ from src.harness.spec_interpreter import SpecInterpreter
 from src.harness.assertion_engine import AssertionEngine
 from src.harness.report_generator import ReportGenerator, format_currency
 from src.validators.depara_validator import DeparaValidator
+import src.database.local_db as local_db
 
 # Set up logging
 logging.basicConfig(
@@ -155,7 +157,30 @@ class ValidationOrchestrator:
         task_name = task.get("name")
         logger.info(f"Processing task '{task_name}' (ID: {task_id})")
 
+        # 0. Check if validation engine is active in local DB config
+        if not local_db.is_motor_ativo():
+            logger.warning(f"Validation engine is PAUSED (motor_ativo = false). Skipping task {task_id}")
+            return False
+
+        start_time = time.time()
         uaid = self.extract_uaid(task_name)
+        cnpj = ""
+        empresa = ""
+        periodos_analise = ""
+        
+        def log_local_audit(success_flag: bool, erros: list):
+            tempo_ms = int((time.time() - start_time) * 1000)
+            local_db.log_validation_attempt(
+                task_id=task_id,
+                uaid=uaid or "N/A",
+                cnpj=cnpj or "N/A",
+                empresa=empresa or "N/A",
+                periodo=periodos_analise or "N/A",
+                sucesso=success_flag,
+                tempo_ms=tempo_ms,
+                erros=erros
+            )
+
         if not uaid:
             comment = (
                 "⚠️ **Erro de Identificação:**\n"
@@ -164,6 +189,7 @@ class ValidationOrchestrator:
                 "Renomeie o card inserindo o UAID no final. Exemplo: `Empresa | CNPJ | UAID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`."
             )
             self._update_clickup(task_id, comment, "conferir dados", current_status=task.get("status", {}).get("status"))
+            log_local_audit(False, [{"tipo": "identificacao_falhou", "message": "UAID não encontrado no título da tarefa"}])
             return False
 
         # 1. Fetch processing log in BALANCETES_PROCESSADOS
@@ -172,6 +198,7 @@ class ValidationOrchestrator:
         except Exception as e:
             comment = f"❌ **Erro de Sistema:** Falha ao conectar ao BigQuery: {e}"
             self._update_clickup(task_id, comment, "conferir dados", current_status=task.get("status", {}).get("status"))
+            log_local_audit(False, [{"tipo": "erro_bigquery", "message": f"Falha de conexão: {e}"}])
             return False
 
         if not log_data:
@@ -181,6 +208,7 @@ class ValidationOrchestrator:
                 f"Isso significa que a planilha correspondente a este card ainda não foi processada pelo sistema de ingestão."
             )
             self._update_clickup(task_id, comment, "conferir dados", current_status=task.get("status", {}).get("status"))
+            log_local_audit(False, [{"tipo": "ingestao_nao_encontrada", "message": "UAID inexistente na tabela BALANCETES_PROCESSADOS"}])
             return False
 
         ingestao_concluida = log_data.get("ingestao_concluida")
@@ -193,6 +221,7 @@ class ValidationOrchestrator:
         if ingestao_concluida == 3 or (msg_erro and msg_erro.strip()):
             comment = parse_and_format_error(msg_erro)
             self._update_clickup(task_id, comment, "conferir dados", current_status=task.get("status", {}).get("status"))
+            log_local_audit(False, [{"tipo": "ingestao_erro_banco", "message": msg_erro}])
             return False
         elif ingestao_concluida != 2:
             comment = (
@@ -201,6 +230,7 @@ class ValidationOrchestrator:
                 f"Por favor, execute o validador novamente após a ingestão ser concluída."
             )
             self._update_clickup(task_id, comment, "para começar", current_status=task.get("status", {}).get("status"))
+            log_local_audit(False, [{"tipo": "aguardando_ingestao", "message": f"Status da ingestão: {ingestao_concluida}"}])
             return False
 
         # 2. Detect report type based on where the UAID rows reside in BigQuery
@@ -209,6 +239,7 @@ class ValidationOrchestrator:
         except Exception as e:
             comment = f"❌ **Erro de Sistema:** Falha ao detectar tipo de relatório no BigQuery: {e}"
             self._update_clickup(task_id, comment, "conferir dados", current_status=task.get("status", {}).get("status"))
+            log_local_audit(False, [{"tipo": "erro_bigquery", "message": f"Falha na detecção do tipo de relatório: {e}"}])
             return False
 
         if not report_info:
@@ -218,6 +249,7 @@ class ValidationOrchestrator:
                 f"mas nenhuma linha contendo este UAID foi encontrada nas tabelas de dados."
             )
             self._update_clickup(task_id, comment, "conferir dados", current_status=task.get("status", {}).get("status"))
+            log_local_audit(False, [{"tipo": "dados_ausentes", "message": "UAID concluído no log mas sem linhas nas tabelas analíticas"}])
             return False
 
         table_name = report_info["table_name"]
@@ -275,13 +307,35 @@ class ValidationOrchestrator:
                     else:
                         comment += equation_comment
                 
+                # Compile structured errors for dashboard SQLite audit log
+                erros_lista = []
+                if not depara_res["passed"]:
+                    erros_lista.append({
+                        "tipo": "depara_faltante",
+                        "contas": [r["conta_origem"] for r in depara_res.get("unmapped_accounts", [])]
+                    })
+                if not equation_passed and totals:
+                    erros_lista.append({
+                        "tipo": "equacao_desbalanceada",
+                        "diferenca": abs(totals["sum_debito"] - totals["sum_credito"])
+                    })
+                for assertion in rubricas_res.get("assertions", []):
+                    if not assertion.get("passed", True):
+                        erros_lista.append({
+                            "tipo": "rubrica_divergente",
+                            "rubrica": assertion["rubrica"],
+                            "diferenca": assertion["diferenca"]
+                        })
+
                 self._update_clickup(task_id, comment, next_status, current_status=task.get("status", {}).get("status"))
+                log_local_audit(success, erros_lista)
                 return success
                 
             except Exception as e:
                 logger.error(f"Failed to validate balancete: {e}")
                 comment = f"❌ **Erro no Processamento da Validação:** Falha interna ao executar testes contábeis: {e}"
                 self._update_clickup(task_id, comment, "conferir dados", current_status=task.get("status", {}).get("status"))
+                log_local_audit(False, [{"tipo": "erro_validador_interno", "message": str(e)}])
                 return False
         else:
             # --- AUXILIARY REPORT VALIDATION ---
@@ -296,6 +350,7 @@ class ValidationOrchestrator:
                 f"Card movido automaticamente para a coluna **`validação coordenador`**."
             )
             self._update_clickup(task_id, comment, next_status, current_status=task.get("status", {}).get("status"))
+            log_local_audit(True, [])
             return True
 
     def _update_clickup(self, task_id: str, comment: str, next_status: str, current_status: str = None):
@@ -445,6 +500,9 @@ def main():
     if args.verbose:
         logger.setLevel(logging.DEBUG)
         
+    # Initialize local SQLite DB
+    local_db.init_db()
+    
     orchestrator = ValidationOrchestrator(dry_run=args.dry_run)
     
     if args.server or "PORT" in os.environ:

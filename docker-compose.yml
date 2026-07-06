@@ -102,6 +102,7 @@ services:
     volumes:
       - ./gcp_key.json:/app/gcp_key.json:ro
       - .env:/app/.env:ro
+      - validator_data:/app/data
     networks:
       - n8n-network
 
@@ -109,6 +110,7 @@ volumes:
   postgres_data:
   redis_data:
   n8n_data:
+  validator_data:
 
 networks:
   n8n-network:

@@ -51,7 +51,6 @@ class ClickUpClient:
         while True:
             params = [
                 ("statuses[]", "para começar"),
-                ("statuses[]", "conferir dados"),
                 ("include_closed", "false"),
                 ("page", page)
             ]
