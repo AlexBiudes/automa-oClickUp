@@ -1,0 +1,447 @@
+[
+  {
+    "mother_page": "Indicadores de Resultado Por Empresa",
+    "subpages": []
+  },
+  {
+    "mother_page": "Indicadores de Resultado Por Filial",
+    "subpages": []
+  },
+  {
+    "mother_page": "Análises Sobre o Faturamento Por Empresa",
+    "subpages": []
+  },
+  {
+    "mother_page": "Análises Sobre o Faturamento Por Filial",
+    "subpages": []
+  },
+  {
+    "mother_page": "Análise de receitas Detalhada",
+    "subpages": [
+      "Análise de receitas por Operação",
+      "Duplicata de Análise de receitas por Operação"
+    ]
+  },
+  {
+    "mother_page": "Lucro X Fluxo",
+    "subpages": [
+      "Lucro X Fluxo Simulado Mensal",
+      "Lucro X Fluxo Simulado Acum"
+    ]
+  },
+  {
+    "mother_page": "Variação de Custos Acumulados",
+    "subpages": [
+      "DF Var de Custos ACU",
+      "DF Var de Custos ACU LY"
+    ]
+  },
+  {
+    "mother_page": "Var Desp Financeira",
+    "subpages": [
+      "Var Desp Financeira ACU",
+      "Var outras desp"
+    ]
+  },
+  {
+    "mother_page": "Análise ABC do Saldo de Estoque",
+    "subpages": []
+  },
+  {
+    "mother_page": "aging_list_adto_clientes",
+    "subpages": [
+      "DF Aging Adto Clientes",
+      "aging_list_adto_Fornecedores",
+      "DF Aging Adto Fornecedores"
+    ]
+  },
+  {
+    "mother_page": "DRE BenchMk",
+    "subpages": []
+  },
+  {
+    "mother_page": "DRE_expand_Benchmk",
+    "subpages": []
+  },
+  {
+    "mother_page": "Mapa de Decomposição",
+    "subpages": []
+  },
+  {
+    "mother_page": "Grau de Imobilização",
+    "subpages": []
+  },
+  {
+    "mother_page": "Rentabilidade",
+    "subpages": [
+      "Indices de Rentabilidade",
+      "Indicadores de Rentabilidade Simulado",
+      "Indicadores de Rentabilidade Simulado ACU"
+    ]
+  },
+  {
+    "mother_page": "aging_list_clientes",
+    "subpages": [
+      "aging_list_clientes_tend",
+      "DF Aging Clientes"
+    ]
+  },
+  {
+    "mother_page": "aging_list_fornecedores",
+    "subpages": [
+      "aging_list_fornec_tend",
+      "DF Aging Fornecedores"
+    ]
+  },
+  {
+    "mother_page": "DRE",
+    "subpages": [
+      "DRE Assinado",
+      "DRE_expand",
+      "TESTES_DRE",
+      "DRE_AH",
+      "DRE TRI"
+    ]
+  },
+  {
+    "mother_page": "indicadores_de_resultado",
+    "subpages": []
+  },
+  {
+    "mother_page": "Análises Sobre o Faturamento",
+    "subpages": []
+  },
+  {
+    "mother_page": "Ebitda",
+    "subpages": [
+      "Tendências Ebitda",
+      "Dívida Liq / EBITDA",
+      "Dívida Liq / EBITDA ACU"
+    ]
+  },
+  {
+    "mother_page": "Variação de Custos",
+    "subpages": [
+      "DF Variação de Custos",
+      "DF Variação de Custos LM"
+    ]
+  },
+  {
+    "mother_page": "Evolução das Despesas",
+    "subpages": [
+      "Evolução das Despesas Por Empresa",
+      "Evolução das Despesas Por Filial",
+      "MC - Evolução das Despesas"
+    ]
+  },
+  {
+    "mother_page": "Variacao DespADM",
+    "subpages": []
+  },
+  {
+    "mother_page": "Var Desp Pessoal",
+    "subpages": []
+  },
+  {
+    "mother_page": "var desp comerciais",
+    "subpages": []
+  },
+  {
+    "mother_page": "Componentes do Ativo Circulante",
+    "subpages": [
+      "Análise ativo circulante"
+    ]
+  },
+  {
+    "mother_page": "Análise dos Estoques",
+    "subpages": []
+  },
+  {
+    "mother_page": "Componentes do Passivo Circulante",
+    "subpages": [
+      "analise_passivo_circulante"
+    ]
+  },
+  {
+    "mother_page": "Análise dos Empréstimos e Financiamentos",
+    "subpages": [
+      "Análise dos Empréstimos e Financiamentos haikar"
+    ]
+  },
+  {
+    "mother_page": "adiantamentos de clientes",
+    "subpages": [
+      "Cliente"
+    ]
+  },
+  {
+    "mother_page": "Evolução Cap de Giro e NCG",
+    "subpages": []
+  },
+  {
+    "mother_page": "Prazos médios",
+    "subpages": [
+      "Duplicata de Prazos médios"
+    ]
+  },
+  {
+    "mother_page": "Ciclo Ope e finan",
+    "subpages": []
+  },
+  {
+    "mother_page": "Indicadores de Liquidez",
+    "subpages": []
+  },
+  {
+    "mother_page": "Indic de Retorno sobre os investmentos",
+    "subpages": []
+  },
+  {
+    "mother_page": "Indic de Participação de Capital de Terceiros",
+    "subpages": []
+  },
+  {
+    "mother_page": "Análise de Solvência do Negócio",
+    "subpages": [
+      "Análise de Solvência"
+    ]
+  },
+  {
+    "mother_page": "BLATV",
+    "subpages": [
+      "BLATV AH",
+      "BLATRI"
+    ]
+  },
+  {
+    "mother_page": "BLPASPL",
+    "subpages": [
+      "BLPASPL AH",
+      "BLPASPLTRI"
+    ]
+  },
+  {
+    "mother_page": "DFC",
+    "subpages": [
+      "DFC ASSINADA",
+      "DFC_TRI",
+      "DFC EXPANDIDA",
+      "DFC EXP TRI",
+      "Análise DFC"
+    ]
+  },
+  {
+    "mother_page": "Menús e Navegação Global",
+    "subpages": [
+      "capa",
+      "Validador DePara",
+      "Glossário Páginas",
+      "Menu_Gestor",
+      "Menu_Inicial"
+    ]
+  },
+  {
+    "mother_page": "Custos_detalhado",
+    "subpages": []
+  },
+  {
+    "mother_page": "Custos_detalhado_acum",
+    "subpages": []
+  },
+  {
+    "mother_page": "Variação Margem Bruta acumulada",
+    "subpages": []
+  },
+  {
+    "mother_page": "Análise_espec_Despesas",
+    "subpages": []
+  },
+  {
+    "mother_page": "evo despesas financeira",
+    "subpages": []
+  },
+  {
+    "mother_page": "valuation",
+    "subpages": []
+  },
+  {
+    "mother_page": "BP Combinado",
+    "subpages": []
+  },
+  {
+    "mother_page": "Volumetria",
+    "subpages": []
+  },
+  {
+    "mother_page": "McD -Faturam X Despesas",
+    "subpages": []
+  },
+  {
+    "mother_page": "McD - Faturam X Custos",
+    "subpages": []
+  },
+  {
+    "mother_page": "McD - Faturam X Compras",
+    "subpages": []
+  },
+  {
+    "mother_page": "McD - Faturamento evolução",
+    "subpages": []
+  },
+  {
+    "mother_page": "McD - PNs",
+    "subpages": []
+  },
+  {
+    "mother_page": "McD - Desp Controladas",
+    "subpages": []
+  },
+  {
+    "mother_page": "McD - Desp Nao Controladas",
+    "subpages": []
+  },
+  {
+    "mother_page": "McD - Evo PNs Clientes",
+    "subpages": []
+  },
+  {
+    "mother_page": "McD - Evo PNs Fornec",
+    "subpages": []
+  },
+  {
+    "mother_page": "Simulador Operacional Mensal",
+    "subpages": []
+  },
+  {
+    "mother_page": "Simulador Operacional Acumulado",
+    "subpages": []
+  },
+  {
+    "mother_page": "Simulador Financ Mensal",
+    "subpages": []
+  },
+  {
+    "mother_page": "Simulador Financ Acumulado",
+    "subpages": []
+  },
+  {
+    "mother_page": "CFS - Simulador",
+    "subpages": []
+  },
+  {
+    "mother_page": "evo despesas financeira ACU",
+    "subpages": []
+  },
+  {
+    "mother_page": "BP Assinado",
+    "subpages": []
+  },
+  {
+    "mother_page": "DMPL ASSINADA",
+    "subpages": []
+  },
+  {
+    "mother_page": "Dec de Faturamento ASSINADA",
+    "subpages": []
+  },
+  {
+    "mother_page": "Análise SG&A",
+    "subpages": []
+  },
+  {
+    "mother_page": "Tributos a Recuperar",
+    "subpages": []
+  },
+  {
+    "mother_page": "BP Expandido",
+    "subpages": []
+  },
+  {
+    "mother_page": "ROIC",
+    "subpages": []
+  },
+  {
+    "mother_page": "pagina_testes",
+    "subpages": []
+  },
+  {
+    "mother_page": "Período",
+    "subpages": []
+  },
+  {
+    "mother_page": "MC - Variacao Desp Controladas",
+    "subpages": []
+  },
+  {
+    "mother_page": "MC - Evo Desp Controladas",
+    "subpages": []
+  },
+  {
+    "mother_page": "MC - Variacao Desp Não Controladas",
+    "subpages": []
+  },
+  {
+    "mother_page": "MC - Evo Desp Não Controladas",
+    "subpages": []
+  },
+  {
+    "mother_page": "DF Partes Relacionadas",
+    "subpages": []
+  },
+  {
+    "mother_page": "DF Empréstimos CP",
+    "subpages": []
+  },
+  {
+    "mother_page": "DF Empréstimos LP",
+    "subpages": []
+  },
+  {
+    "mother_page": "DF Juros Pagos",
+    "subpages": []
+  },
+  {
+    "mother_page": "Variação Margem Bruta",
+    "subpages": []
+  },
+  {
+    "mother_page": "Variação Lucro Líquido",
+    "subpages": []
+  },
+  {
+    "mother_page": "Evo Desp ADM",
+    "subpages": []
+  },
+  {
+    "mother_page": "evo despesas pessoal",
+    "subpages": []
+  },
+  {
+    "mother_page": "evo desp comerciais/contrat",
+    "subpages": []
+  },
+  {
+    "mother_page": "evo outras desp",
+    "subpages": []
+  },
+  {
+    "mother_page": "Tributos incidentes",
+    "subpages": []
+  },
+  {
+    "mother_page": "Tributos recolher",
+    "subpages": []
+  },
+  {
+    "mother_page": "Análise das Obrigações Trabalhistas",
+    "subpages": []
+  },
+  {
+    "mother_page": "Análise das Obrigações Tributárias",
+    "subpages": []
+  },
+  {
+    "mother_page": "outras contas pagar",
+    "subpages": []
+  }
+]

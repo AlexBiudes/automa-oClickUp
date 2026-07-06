@@ -1,0 +1,115 @@
+name: equipe-clickup
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: n8n-postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=n8n
+      - POSTGRES_PASSWORD=n8n_db_password_change_me
+      - POSTGRES_DB=n8n
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - n8n-network
+    # A porta não está exposta para o host por segurança. O n8n acessa via rede interna.
+
+  redis:
+    image: redis:6-alpine
+    container_name: n8n-redis
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - n8n-network
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: n8n-main
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=n8n
+      - DB_POSTGRESDB_PASSWORD=n8n_db_password_change_me
+      
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_REDIS_HOST=redis
+      - QUEUE_BULL_REDIS_PORT=6379
+      
+      - N8N_ENCRYPTION_KEY=n8n_encryption_key_change_me
+      
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+      - WEBHOOK_URL=http://localhost:5678/
+      
+      - GENERIC_TIMEZONE=America/Sao_Paulo
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - n8n-network
+    depends_on:
+      - postgres
+      - redis
+
+  n8n-worker:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: n8n-worker-1
+    restart: always
+    command: worker
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=n8n
+      - DB_POSTGRESDB_PASSWORD=n8n_db_password_change_me
+      
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_REDIS_HOST=redis
+      - QUEUE_BULL_REDIS_PORT=6379
+      
+      - N8N_ENCRYPTION_KEY=n8n_encryption_key_change_me
+      - NODE_ENV=production
+      
+      - GENERIC_TIMEZONE=America/Sao_Paulo
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - n8n-network
+    depends_on:
+      - postgres
+      - redis
+
+  validator:
+    build: .
+    container_name: clickup-bq-validator
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - CLICKUP_API_TOKEN=${CLICKUP_API_TOKEN}
+      - CLICKUP_LIST_ID=${CLICKUP_LIST_ID}
+      - GCP_KEY_PATH=/app/gcp_key.json
+    volumes:
+      - ./gcp_key.json:/app/gcp_key.json:ro
+      - .env:/app/.env:ro
+    networks:
+      - n8n-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  n8n_data:
+
+networks:
+  n8n-network:
+    driver: bridge

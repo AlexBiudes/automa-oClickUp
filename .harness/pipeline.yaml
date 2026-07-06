@@ -1,0 +1,96 @@
+pipeline:
+  name: ClickUp BQ Validation Pipeline
+  identifier: ClickUp_BQ_Validation_Pipeline
+  projectIdentifier: Finance_BI_Integrations
+  orgIdentifier: default
+  tags: {}
+  stages:
+    - stage:
+        name: Build and Test
+        identifier: Build_and_Test
+        description: Runs automated testing and code quality checks
+        type: CI
+        spec:
+          cloneCodebase: true
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: local-k8s-connector
+              namespace: harness-build-runners
+          sharedPaths:
+            - /root/.cache
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Install Dependencies
+                  identifier: Install_Dependencies
+                  spec:
+                    connectorRef: docker-hub-connector
+                    image: python:3.11-slim
+                    shell: Sh
+                    command: |
+                      python -m pip install --upgrade pip
+                      pip install -r requirements.txt
+                      pip install pytest
+              - step:
+                  type: Run
+                  name: Run Unit Tests
+                  identifier: Run_Unit_Tests
+                  spec:
+                    connectorRef: docker-hub-connector
+                    image: python:3.11-slim
+                    shell: Sh
+                    command: |
+                      export CLICKUP_API_TOKEN="mock-token"
+                      export CLICKUP_LIST_ID="mock-list-id"
+                      export GCP_KEY_PATH="mock-gcp-key.json"
+                      python -m unittest discover -s tests
+    - stage:
+        name: Container Build and Push
+        identifier: Container_Build_and_Push
+        type: CI
+        spec:
+          cloneCodebase: true
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: local-k8s-connector
+              namespace: harness-build-runners
+          execution:
+            steps:
+              - step:
+                  type: BuildAndPushDockerRegistry
+                  name: Build and Push to GCP Artifact Registry
+                  identifier: Build_and_Push_GCP
+                  spec:
+                    connectorRef: gcp-registry-connector
+                    repo: gcr.io/bi-performance/clickup-bq-validator
+                    tags:
+                      - latest
+                      - <+pipeline.sequenceId>
+    - stage:
+        name: Deploy to Cloud Run
+        identifier: Deploy_to_Cloud_Run
+        type: Deployment
+        spec:
+          service:
+            serviceRef: clickup_bq_validator_service
+            serviceInputs:
+              type: CloudRun
+              spec:
+                image: gcr.io/bi-performance/clickup-bq-validator:<+pipeline.sequenceId>
+          environment:
+            environmentRef: prod_environment
+            deployToAll: false
+          execution:
+            steps:
+              - step:
+                  type: CloudRunDeploy
+                  name: Deploy to Production
+                  identifier: Deploy_Prod
+                  spec:
+                    region: southamerica-east1
+                    concurrency: 80
+                    cpu: 1
+                    memory: 512Mi

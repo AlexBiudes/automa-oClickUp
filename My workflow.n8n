@@ -1,0 +1,426 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            },
+            {
+              "triggerAtHour": 12
+            },
+            {
+              "triggerAtHour": 18
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -736,
+        -464
+      ],
+      "id": "8ab7f409-5191-4c96-817b-b1fca96b07c6",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "projectId": {
+          "__rl": true,
+          "value": "bi-performance",
+          "mode": "list",
+          "cachedResultName": "BI-Performance",
+          "cachedResultUrl": "https://console.cloud.google.com/bigquery?project=bi-performance"
+        },
+        "sqlQuery": "SELECT \n  (SELECT UAID FROM `bi-performance.BI_PROD.BALANCETE_ERP` WHERE UAID = '{{ $json.extracted_uaid }}' LIMIT 1) as uaid_encontrado,\n  '{{ $json.id }}' as task_id",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleBigQuery",
+      "typeVersion": 2.1,
+      "position": [
+        400,
+        -480
+      ],
+      "id": "ef00b640-e5eb-47be-a549-43251499d89b",
+      "name": "Execute a SQL query",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleApi": {
+          "id": "291fM2eCKpLXrROM",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "team": "90171059571",
+        "space": "90174869955",
+        "folder": "90177689613",
+        "list": "901712259298",
+        "returnAll": false,
+        "limit": 100,
+        "filters": {
+          "statuses": [
+            "para começar"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        -384
+      ],
+      "id": "701f193d-2f64-4e89-b1ad-04a8564e5da8",
+      "name": "Get many tasks",
+      "executeOnce": false,
+      "credentials": {
+        "clickUpApi": {
+          "id": "M1llSyeGDORkhGjQ",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "cond-bq-1",
+              "leftValue": "={{ $json.uaid_encontrado }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        600,
+        -352
+      ],
+      "id": "2668c6fc-e2f9-4858-86cc-317736199ed4",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('Get many tasks').item.json.id }}",
+        "updateFields": {
+          "status": "validação coordenador"
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        900,
+        -544
+      ],
+      "id": "563e5e5d-0a56-4a4c-85b2-5ea2216d122d",
+      "name": "Update a task",
+      "credentials": {
+        "clickUpApi": {
+          "id": "M1llSyeGDORkhGjQ",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $('Get many tasks').item.json.id }}",
+        "updateFields": {
+          "status": "conferir dados"
+        }
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        900,
+        -240
+      ],
+      "id": "aba6ff00-cbc4-4fd8-958e-272a4a3c37bb",
+      "name": "Update a task1",
+      "credentials": {
+        "clickUpApi": {
+          "id": "M1llSyeGDORkhGjQ",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "dd82a3f5-223e-4dcc-8c52-666caea39a31",
+              "leftValue": "={{ $json.text_content }}",
+              "rightValue": "relatorio",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -272,
+        -320
+      ],
+      "id": "f38d8c36-bed4-4ea9-aa0a-babcd7264b82",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  const match = item.json.name ? item.json.name.match(/UAID:\\s*([a-zA-Z0-9\\-]+)/) : null;\n  if (match && match[1]) {\n    item.json.is_valid_uaid = true;\n    item.json.extracted_uaid = match[1];\n  } else {\n    item.json.is_valid_uaid = false;\n    item.json.extracted_uaid = null;\n  }\n}\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        -320
+      ],
+      "id": "code-extract-uaid",
+      "name": "Extract UAID"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "cond-uaid-1",
+              "leftValue": "={{ $json.is_valid_uaid }}",
+              "rightValue": "={{ true }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        200,
+        -320
+      ],
+      "id": "if-check-uaid",
+      "name": "If UAID Exists"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "taskId": "={{ $json.id }}",
+        "commentText": "UAID não encontrado no título da tarefa. Por favor, verifique e corrija o título.",
+        "assignees": []
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        400,
+        -150
+      ],
+      "id": "comment-no-uaid",
+      "name": "Comment No UAID",
+      "credentials": {
+        "clickUpApi": {
+          "id": "M1llSyeGDORkhGjQ",
+          "name": "ClickUp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "taskId": "={{ $json.id }}",
+        "commentText": "O UAID '{{ $json.extracted_uaid }}' não foi encontrado na base do BigQuery.",
+        "assignees": []
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        688,
+        -50
+      ],
+      "id": "comment-not-bq",
+      "name": "Comment Not in BQ",
+      "credentials": {
+        "clickUpApi": {
+          "id": "M1llSyeGDORkhGjQ",
+          "name": "ClickUp account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get many tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many tasks": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Extract UAID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract UAID": {
+      "main": [
+        [
+          {
+            "node": "If UAID Exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If UAID Exists": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Comment No UAID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Comment No UAID": {
+      "main": [
+        [
+          {
+            "node": "Update a task1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Update a task",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Comment Not in BQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Comment Not in BQ": {
+      "main": [
+        [
+          {
+            "node": "Update a task1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "a2cebdbb-e479-47ae-b839-7ed5601facdc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c39c63cd3b175cabbbee3b0dcee16f8616578c8332b57e04476ae573e76dc18f"
+  },
+  "id": "chpos7cHhfEM5hJc",
+  "tags": []
+}

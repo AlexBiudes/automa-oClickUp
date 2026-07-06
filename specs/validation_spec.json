@@ -1,0 +1,50 @@
+{
+  "project_name": "Validação Contábil ClickUp-BQ",
+  "version": "2.1.0",
+  "bi_view": "bi-performance.BI_QA.VIZ_BALANCETE_AUTO_BI_NEW",
+  "rubricas_key": [
+    {
+      "name": "BL_ATCIR_Estoques",
+      "description": "Validação de estoques no ativo circulante",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATCIR_caixasequicaixas",
+      "description": "Validação de disponibilidades (caixa e equivalentes)",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATCIR_Contas_Receber",
+      "description": "Validação de contas a receber de clientes",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSCIR_Fornecedores",
+      "description": "Validação de fornecedores nacionais e internacionais no passivo",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PL_Capital_Social",
+      "description": "Validação de capital social integralizado",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "Custo dos Produtos Vendidos",
+      "description": "Validação de custo de produtos vendidos no DRE",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    }
+  ],
+  "validacoes_gerais": [
+    {
+      "name": "PLANO_DEPARA_COMPLETO",
+      "description": "Garante que todas as contas contábeis analíticas do balancete importado possuem De-Para no plano_dp",
+      "type": "depara_check"
+    }
+  ]
+}
