@@ -4,14 +4,20 @@
   "bi_view": "bi-performance.BI_QA.VIZ_BALANCETE_AUTO_BI_NEW",
   "rubricas_key": [
     {
-      "name": "BL_ATCIR_Estoques",
-      "description": "Validação de estoques no ativo circulante",
+      "name": "BL_ATCIR_Adiantamentos",
+      "description": "Validação de adiantamentos no ativo circulante",
       "tabela_amarracao": "plano_amarracao_bp_ativo",
       "tolerance": 0.05
     },
     {
-      "name": "BL_ATCIR_caixasequicaixas",
-      "description": "Validação de disponibilidades (caixa e equivalentes)",
+      "name": "BL_ATCIR_Adiantamentos_Fornecedores",
+      "description": "Validação de adiantamentos a fornecedores",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATCIR_Adiantamentos_Socios",
+      "description": "Validação de adiantamentos a sócios no circulante",
       "tabela_amarracao": "plano_amarracao_bp_ativo",
       "tolerance": 0.05
     },
@@ -22,8 +28,319 @@
       "tolerance": 0.05
     },
     {
+      "name": "BL_ATCIR_Creditos_Conta_Vinculada",
+      "description": "Validação de créditos em conta vinculada",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATCIR_Creditos_a_socios",
+      "description": "Validação de créditos a sócios no circulante",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATCIR_Despesas_Antecipadas",
+      "description": "Validação de despesas antecipadas no circulante",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATCIR_Estoques",
+      "description": "Validação de estoques no ativo circulante",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATCIR_Impostos_recuperar",
+      "description": "Validação de impostos a recuperar no circulante",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATCIR_Medicoes_Faturar",
+      "description": "Validação de medições a faturar no circulante",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATCIR_Outras_Contas_Receber",
+      "description": "Validação de outras contas a receber no circulante",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATCIR_Outros_Creditos",
+      "description": "Validação de outros créditos no circulante",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATCIR_Outros_Investimentos",
+      "description": "Validação de outros investimentos no circulante",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATCIR_Partes_Relacionadas",
+      "description": "Validação de partes relacionadas no circulante",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATCIR_caixasequicaixas",
+      "description": "Validação de disponibilidades (caixa e equivalentes)",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATCIR_soma",
+      "description": "Soma do ativo circulante (derivado)",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "BL_ATNCIR_Aplicacoes_de_Longo_Prazo",
+      "description": "Validação de aplicações de longo prazo",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATNCIR_Ativo_Diferido",
+      "description": "Validação de ativo diferido",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATNCIR_Ativo_Direito_Uso",
+      "description": "Validação de ativo direito de uso",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATNCIR_Compensacao_Ativa",
+      "description": "Validação de compensação ativa no não circulante",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATNCIR_Contas_Receber_LP",
+      "description": "Validação de contas a receber no longo prazo",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATNCIR_Depositos_Judiciais",
+      "description": "Validação de depósitos judiciais",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATNCIR_Despesas_Antecipadas",
+      "description": "Validação de despesas antecipadas no não circulante",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATNCIR_Despesas_Antecipadas_LP",
+      "description": "Validação de despesas antecipadas longo prazo",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATNCIR_Imobilizado_Liquido",
+      "description": "Validação de imobilizado líquido",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATNCIR_Impostos_recuperar",
+      "description": "Validação de impostos a recuperar no não circulante",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATNCIR_Intangivel_Liquido",
+      "description": "Validação de intangível líquido",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATNCIR_Investimentos",
+      "description": "Validação de investimentos no não circulante",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATNCIR_Outras_Contas_Receber",
+      "description": "Validação de outras contas a receber no não circulante",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATNCIR_Partes_Relacionadas",
+      "description": "Validação de partes relacionadas no não circulante",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_ATNCIR_soma",
+      "description": "Soma do ativo não circulante (derivado)",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "BL_TOTBANCOATV",
+      "description": "Total geral do ativo (derivado)",
+      "tabela_amarracao": "plano_amarracao_bp_ativo",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "BL_PASSCIR_Adiantamentos_Clientes",
+      "description": "Validação de adiantamentos de clientes",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSCIR_Caixas_Transitorios_Credores",
+      "description": "Validação de caixas transitórios credores",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSCIR_Debitos_Diversos",
+      "description": "Validação de débitos diversos no circulante",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSCIR_Distrato",
+      "description": "Validação de obrigações por distrato",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSCIR_Dividendos_Jcp",
+      "description": "Validação de dividendos e JCP a pagar",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSCIR_Emprestimos_Financiamentos",
+      "description": "Validação de empréstimos e financiamentos circulante",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
       "name": "BL_PASSCIR_Fornecedores",
       "description": "Validação de fornecedores nacionais e internacionais no passivo",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSCIR_Obrigacoes_Trabalhistas",
+      "description": "Validação de obrigações trabalhistas",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSCIR_Obrigacoes_Tributarias",
+      "description": "Validação de obrigações tributárias circulante",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSCIR_Obrigacoes_Tributarias_Diferido",
+      "description": "Validação de tributos diferidos circulante",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSCIR_Outras_Contas_Pagar",
+      "description": "Validação de outras contas a pagar circulante",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSCIR_Partes_Relacionadas",
+      "description": "Validação de partes relacionadas circulante",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSCIR_soma",
+      "description": "Soma do passivo circulante (derivado)",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "BL_PASSNCIR_Compensacao_Passiva",
+      "description": "Validação de compensação passiva",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSNCIR_Emprestimos_Financiamentos",
+      "description": "Validação de empréstimos e financiamentos LP",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSNCIR_Fornecedores_Internacionais",
+      "description": "Validação de fornecedores internacionais longo prazo",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSNCIR_Obrigacoes_Tributarias",
+      "description": "Validação de obrigações tributárias LP",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSNCIR_Outras_Contas_Pagar",
+      "description": "Validação de outras contas a pagar LP",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSNCIR_Outras_Provisões",
+      "description": "Validação de outras provisões LP",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSNCIR_Partes_Relacionadas",
+      "description": "Validação de partes relacionadas LP",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSNCIR_Provisao_Garantia",
+      "description": "Validação de provisão de garantia LP",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PASSNCIR_soma",
+      "description": "Soma do passivo não circulante (derivado)",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "BL_PL_Adto_Aumento_Capital",
+      "description": "Validação de adiantamento para aumento de capital",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PL_Ajuste_avaliacao_patrimonial",
+      "description": "Validação de ajustes de avaliação patrimonial",
       "tabela_amarracao": "plano_amarracao_bp_passivo",
       "tolerance": 0.05
     },
@@ -34,10 +351,475 @@
       "tolerance": 0.05
     },
     {
+      "name": "BL_PL_Capital_Social_Integralizar",
+      "description": "Validação de capital social a integralizar",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PL_Icentivos_Fiscais",
+      "description": "Validação de incentivos fiscais no PL",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PL_Lucro_Prejuizo_liquido",
+      "description": "Validação de lucro ou prejuízo líquido do período no PL",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PL_Lucros_Prejuizos_acumulados",
+      "description": "Validação de lucros ou prejuízos acumulados",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PL_Patrimonio_Social",
+      "description": "Validação de patrimônio social",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PL_Reservas",
+      "description": "Validação de reservas de capital/lucros",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05
+    },
+    {
+      "name": "BL_PL_Soma",
+      "description": "Soma do total do patrimônio líquido (derivado)",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "BL_soma_pass_PL",
+      "description": "Soma de Passivo + PL (derivado)",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "BL_totPassivo",
+      "description": "Total geral do passivo (derivado)",
+      "tabela_amarracao": "plano_amarracao_bp_passivo",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "Custo do Serviço Prestado",
+      "description": "Custo de serviços prestados (derivado)",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
       "name": "Custo dos Produtos Vendidos",
       "description": "Validação de custo de produtos vendidos no DRE",
       "tabela_amarracao": "plano_amarracao_dre",
       "tolerance": 0.05
+    },
+    {
+      "name": "Custo dos Serviços",
+      "description": "Custo de serviços no DRE (derivado)",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "DRE_CSP_Infraestrutura_Produto",
+      "description": "Validação de custos de infraestrutura e produto",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_CSP_Retencao_Clientes",
+      "description": "Validação de despesas com retenção de clientes",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Contribuicao_Social",
+      "description": "Validação de CSLL no DRE",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_NAO_Operacionais_Despesas_nao_operacionais",
+      "description": "Validação de despesas não operacionais",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_NAO_Operacionais_Receita_nao_operacional",
+      "description": "Validação de receitas não operacionais",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_NAO_Operacionais_Receita_nao_operacionalTOTAL",
+      "description": "Total de receitas/despesas não operacionais (derivado)",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_Bancarias",
+      "description": "Validação de despesas bancárias",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_Centro_Distribuicao",
+      "description": "Validação de despesas do centro de distribuição",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_Folha_Centro_Distribuicao",
+      "description": "Validação de despesas com pessoal do centro de distribuição",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_Marketing",
+      "description": "Validação de despesas de marketing",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_Nao_Dedutiveis",
+      "description": "Validação de despesas não dedutíveis",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_Variaveis_Entrega",
+      "description": "Validação de despesas variáveis de entrega",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_administrativas",
+      "description": "Validação de despesas administrativas",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_Alugueis",
+      "description": "Validação de despesas com aluguéis",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_Comunicacao",
+      "description": "Validação de despesas com comunicação",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_Consultoria_Tecnica",
+      "description": "Validação de despesas com consultoria técnica",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_Desenvolvimento",
+      "description": "Validação de despesas com desenvolvimento de produto",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_Frota_Transportes",
+      "description": "Validação de despesas com frotas e transportes",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_Informatica",
+      "description": "Validação de despesas com informática",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_Logistica",
+      "description": "Validação de despesas de logística",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_Manutencoes",
+      "description": "Validação de despesas com manutenção",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_Marketing",
+      "description": "Validação de despesas com marketing institucional",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_Marketplace",
+      "description": "Validação de despesas de comissão de marketplaces",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_Ocupacao",
+      "description": "Validação de despesas de ocupação predial",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_Prestacao_de_Servicos",
+      "description": "Validação de despesas com prestação de serviços de terceiros",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_Propaganda_Publicidade",
+      "description": "Validação de despesas com propaganda",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_Servicos_Profissionais",
+      "description": "Validação de despesas de assessoria/serviços profissionais",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_Utilidades_Servicos",
+      "description": "Validação de água, luz, internet e utilidades",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_Viagens_Estadia",
+      "description": "Validação de despesas com viagens",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_depreciacao",
+      "description": "Validação de despesas de depreciação e amortização",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_pessoal",
+      "description": "Validação do total de despesas com pessoal",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_pessoal_Beneficios",
+      "description": "Validação de benefícios concedidos a funcionários",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_pessoal_Impostos",
+      "description": "Validação de encargos sociais de pessoal (INSS, FGTS)",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_pessoal_Provisoes",
+      "description": "Validação de provisões de férias e 13º salário",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_com_pessoal_Salarios_ordenados",
+      "description": "Validação de salários e ordenados",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_comerciais",
+      "description": "Validação do total de despesas comerciais",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_contratuais",
+      "description": "Validação de despesas contratuais",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_controladas",
+      "description": "Validação de despesas gerenciadas/controladas",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_de_Vendas_Implatacao",
+      "description": "Validação de custos de implantação e vendas",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_nao_Dedutiveis",
+      "description": "Validação de despesas não dedutíveis fiscais",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_nao_controladas",
+      "description": "Validação de despesas não gerenciáveis",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesas_tributarias",
+      "description": "Validação de despesas de impostos sobre lucro",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Despesass_com_Outras_Provisoes",
+      "description": "Validação de outras provisões operacionais",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Equivalencia_Patrimonial",
+      "description": "Validação de equivalência patrimonial positiva",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Equivalencia_Patrimonial_negativa",
+      "description": "Validação de equivalência patrimonial negativa",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Outras_despesas_operacionais",
+      "description": "Validação de outras despesas operacionais",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Outras_receitas_operacionais",
+      "description": "Validação de outras receitas operacionais",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacionais_Tot_Desp_Operacionais",
+      "description": "Total das despesas operacionais (derivado)",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "DRE_Desp_Operacional_Despesas_Folha_Vendas",
+      "description": "Validação de pessoal e comissões da equipe de vendas",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacional_Despesas_Variaveis_Vendas",
+      "description": "Validação de custos variáveis associados a vendas",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Desp_Operacional_Despesas_Vendas",
+      "description": "Validação de despesas com marketing/vendas direct",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Despesa_financeira",
+      "description": "Validação de despesas financeiras (juros, tarifas)",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Imp_Incidentes_Sobre_Receita",
+      "description": "Validação de impostos incidentes sobre faturamento",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_Imposto_de_Renda",
+      "description": "Validação de IRPJ no DRE",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "DRE_LO_antes_do_IR_e_CSLL",
+      "description": "Lucro operacional antes de impostos (derivado)",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "DRE_LO_antes_res_financeiro",
+      "description": "Lucro operacional antes do resultado financeiro (derivado)",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "DRE_Lucro_bruto",
+      "description": "Lucro bruto no DRE (derivado)",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "DRE_Lucro_ou_Prejuizo_liquido",
+      "description": "Lucro ou prejuízo líquido geral do DRE (derivado)",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "DRE_Receita_financeira",
+      "description": "Receitas financeiras (rendimentos) (derivado)",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "Deduções da Receita Bruta",
+      "description": "Validação de devoluções e deduções de vendas",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "Ebitda_despesa_depreciacao",
+      "description": "Validação da despesa de depreciação do EBITDA",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05
+    },
+    {
+      "name": "custo_vendas",
+      "description": "Total de custos de vendas (derivado)",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "dre_Receita_liquida",
+      "description": "Receita líquida de vendas (derivado)",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05,
+      "is_calculation": true
+    },
+    {
+      "name": "receita bruta",
+      "description": "Receita bruta de vendas (derivado)",
+      "tabela_amarracao": "plano_amarracao_dre",
+      "tolerance": 0.05,
+      "is_calculation": true
     }
   ],
   "validacoes_gerais": [

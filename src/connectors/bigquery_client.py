@@ -238,26 +238,33 @@ class BigQueryClient:
             raise ValueError(f"Invalid mapping table name: {tabela_amarracao}")
 
         query = f"""
-        SELECT 
-            b.CONTA as conta_origem, 
-            b.DESCRICAO as descricao_origem, 
-            dp.conta_para as conta_padrao,
-            b.SALDO_ATUAL as saldo_atual,
-            am.multiplicador as multiplicador
-        FROM `bi-performance.BI_PROD.BALANCETE_ERP` b
-        JOIN (
+        WITH amarracao_filtrada AS (
             SELECT 
-                DISTINCT 
-                REPLACE(conta_de, ".0", "") as conta_de, 
-                REPLACE(conta_para, ".0", "") as conta_para, 
-                cnpj
-            FROM `bi-performance.BI_PROD.plano_dp`
-            WHERE conta_de <> "" AND conta_de IS NOT NULL AND LENGTH(conta_para) = 9
-        ) dp ON b.CONTA = dp.conta_de AND b.CNPJ = dp.cnpj
-        JOIN `bi-performance.BI_PROD.{tabela_amarracao}` am 
-          ON dp.conta_para LIKE CONCAT(am.amarracao, '%') AND b.CNPJ = am.cnpj
-        WHERE b.uaid = @uaid AND am.descricao_banco = @rubrica_name
-        ORDER BY b.CONTA
+                b.CONTA as conta_origem, 
+                b.DESCRICAO as descricao_origem, 
+                dp.conta_para as conta_padrao,
+                b.SALDO_ATUAL as saldo_atual,
+                am.multiplicador as multiplicador,
+                am.descricao_banco as rubrica_nome,
+                ROW_NUMBER() OVER(PARTITION BY b.CONTA ORDER BY LENGTH(am.amarracao) DESC) as rn
+            FROM `bi-performance.BI_PROD.BALANCETE_ERP` b
+            JOIN (
+                SELECT 
+                    DISTINCT 
+                    REPLACE(conta_de, ".0", "") as conta_de, 
+                    REPLACE(conta_para, ".0", "") as conta_para, 
+                    cnpj
+                FROM `bi-performance.BI_PROD.plano_dp`
+                WHERE conta_de <> "" AND conta_de IS NOT NULL AND LENGTH(conta_para) = 9
+            ) dp ON b.CONTA = dp.conta_de AND b.CNPJ = dp.cnpj
+            JOIN `bi-performance.BI_PROD.{tabela_amarracao}` am 
+              ON dp.conta_para LIKE CONCAT(am.amarracao, '%') AND b.CNPJ = am.cnpj
+            WHERE b.uaid = @uaid
+        )
+        SELECT conta_origem, descricao_origem, conta_padrao, saldo_atual, multiplicador
+        FROM amarracao_filtrada
+        WHERE rn = 1 AND rubrica_nome = @rubrica_name
+        ORDER BY conta_origem
         """
         job_config = bigquery.QueryJobConfig(
             query_parameters=[
