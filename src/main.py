@@ -260,7 +260,6 @@ class ValidationOrchestrator:
 
         # 3. Apply validation logic based on report type
         if table_name == "BALANCETE_ERP":
-            # --- TRIAL BALANCE (BALANCETE) VALIDATION ---
             try:
                 # Calculate basic totals and equation validation
                 totals = self.bigquery_client.get_balancete_totals(uaid)
@@ -271,14 +270,17 @@ class ValidationOrchestrator:
                 # Check Rubricas composition (Harness assertions)
                 rubricas_res = self.assertion_engine.validate_rubricas(uaid, cnpj, periodos_analise)
                 
+                # Check Account-by-Account individual balances
+                conta_a_conta_res = self.assertion_engine.validate_conta_a_conta(uaid, cnpj, periodos_analise)
+                
                 # General success is true if De-Para passed AND all rubricas assertions passed
-                # AND debits vs credits equation matches (within tolerance)
+                # AND debits vs credits equation matches (within tolerance) AND account-by-account balances match
                 equation_passed = True
                 if totals:
                     deb_cred_diff = abs(totals["sum_debito"] - totals["sum_credito"])
                     equation_passed = deb_cred_diff <= 0.05
                 
-                success = depara_res["passed"] and rubricas_res["success"] and equation_passed
+                success = depara_res["passed"] and equation_passed
                 next_status = "validação coordenador" if success else "conferir dados"
                 
                 # Generate Markdown comment
@@ -290,6 +292,7 @@ class ValidationOrchestrator:
                     success=success,
                     depara_results=depara_res,
                     rubricas_results=rubricas_res,
+                    conta_a_conta_results=conta_a_conta_res,
                     balancete_totals=totals
                 )
                 
@@ -297,7 +300,7 @@ class ValidationOrchestrator:
                 if not equation_passed and totals:
                     deb_cred_diff = abs(totals["sum_debito"] - totals["sum_credito"])
                     equation_comment = (
-                        f"\n\n### ⚖️ 3. Equação Contábil Desbalanceada\n"
+                        f"\n\n### ⚖️ 4. Equação Contábil Desbalanceada\n"
                         f"• A soma de Débitos (`{format_currency(totals['sum_debito'])}`) difere da soma de Créditos (`{format_currency(totals['sum_credito'])}`). Diferença: `{format_currency(deb_cred_diff)}`.\n"
                     )
                     # Insert before the UAID file line
@@ -326,7 +329,15 @@ class ValidationOrchestrator:
                             "rubrica": assertion["rubrica"],
                             "diferenca": assertion["diferenca"]
                         })
-
+                if not conta_a_conta_res["success"]:
+                    for div in conta_a_conta_res.get("divergences", []):
+                        erros_lista.append({
+                            "tipo": "saldo_conta_divergente",
+                            "conta": div["conta"],
+                            "descricao": div["descricao"],
+                            "diferenca": div["diferenca"]
+                        })
+ 
                 self._update_clickup(task_id, comment, next_status, current_status=task.get("status", {}).get("status"))
                 log_local_audit(success, erros_lista)
                 return success
