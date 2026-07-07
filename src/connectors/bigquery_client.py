@@ -229,13 +229,27 @@ class BigQueryClient:
 
     def get_rubrica_composition_from_balancete(self, uaid: str, rubrica_name: str, tabela_amarracao: str) -> list:
         """
-        Queries BALANCETE_ERP, plano_dp, and the specified mapping table to obtain the composition
-        of accounts and balances that should go to the rubrica.
+        Queries BALANCETE_ERP, plano_dp, plano_pp and the specified mapping table to obtain the composition
+        of accounts and balances that should go to the rubrica, mirroring database view logic.
         """
         logger.info(f"Querying rubrica composition for '{rubrica_name}' using mapping table '{tabela_amarracao}'")
         # Safety check on table name
         if not tabela_amarracao or not all(c.isalnum() or c in '._-' for c in tabela_amarracao):
             raise ValueError(f"Invalid mapping table name: {tabela_amarracao}")
+
+        # Choose the correct field from BALANCETE_ERP according to report type
+        if tabela_amarracao == "plano_amarracao_dre":
+            value_field = "b.MOV_PERIODO"
+        elif tabela_amarracao == "plano_amarracao_dfc":
+            value_field = """
+            CASE 
+                WHEN am.tipo = 'movimentacao' THEN b.MOV_PERIODO
+                WHEN am.tipo = 'saldo_anterior' THEN b.SALDO_ANTERIOR
+                ELSE b.SALDO_ATUAL
+            END
+            """
+        else:
+            value_field = "b.SALDO_ATUAL"
 
         query = f"""
         WITH amarracao_filtrada AS (
@@ -243,11 +257,11 @@ class BigQueryClient:
                 b.CONTA as conta_origem, 
                 b.DESCRICAO as descricao_origem, 
                 dp.conta_para as conta_padrao,
-                b.SALDO_ATUAL as saldo_atual,
+                {value_field} as saldo_atual,
                 am.multiplicador as multiplicador,
                 am.descricao_banco as rubrica_nome,
                 ROW_NUMBER() OVER(PARTITION BY b.CONTA ORDER BY LENGTH(am.amarracao) DESC) as rn
-            FROM `bi-performance.BI_PROD.BALANCETE_ERP` b
+            FROM `bi-performance.BI_PROD.plano_pp` pp
             JOIN (
                 SELECT 
                     DISTINCT 
@@ -256,9 +270,10 @@ class BigQueryClient:
                     cnpj
                 FROM `bi-performance.BI_PROD.plano_dp`
                 WHERE conta_de <> "" AND conta_de IS NOT NULL AND LENGTH(conta_para) = 9
-            ) dp ON b.CONTA = dp.conta_de AND b.CNPJ = dp.cnpj
+            ) dp ON pp.cnpj = dp.cnpj AND dp.conta_para = REPLACE(pp.conta, ".0", "") AND pp.grau = 9
+            JOIN `bi-performance.BI_PROD.BALANCETE_ERP` b ON b.CONTA = dp.conta_de AND b.CNPJ = dp.cnpj
             JOIN `bi-performance.BI_PROD.{tabela_amarracao}` am 
-              ON dp.conta_para LIKE CONCAT(am.amarracao, '%') AND b.CNPJ = am.cnpj
+              ON am.cnpj = dp.cnpj AND am.amarracao = LEFT(dp.conta_para, LENGTH(am.amarracao))
             WHERE b.uaid = @uaid
         )
         SELECT conta_origem, descricao_origem, conta_padrao, saldo_atual, multiplicador
@@ -287,4 +302,82 @@ class BigQueryClient:
             ]
         except Exception as e:
             logger.error(f"Error querying rubrica composition from balancete: {e}")
+            raise
+
+    def get_bi_accounts_balances(self, cnpj: str, data_base: str, bi_view: str) -> dict:
+        """
+        Queries VIZ_BALANCETE_AUTO_BI_NEW in BigQuery to retrieve all individual analytical 
+        accounts and their balances for a given CNPJ and period (data_base).
+        Returns a dict: {conta: saldo}
+        """
+        logger.info(f"Querying BI accounts and balances (CNPJ: {cnpj}, Data: {data_base})")
+        if not bi_view or not all(c.isalnum() or c in '._-' for c in bi_view):
+            raise ValueError(f"Invalid bi_view name: {bi_view}")
+
+        query = f"""
+        SELECT DISTINCT conta, SUM(vlr) as val
+        FROM `{bi_view}`
+        WHERE cnpj = @cnpj AND data = @data_base AND conta <> '000000000' AND conta IS NOT NULL
+        GROUP BY conta
+        """
+        job_config = bigquery.QueryJobConfig(
+            query_parameters=[
+                bigquery.ScalarQueryParameter("cnpj", "STRING", cnpj),
+                bigquery.ScalarQueryParameter("data_base", "STRING", data_base)
+            ]
+        )
+        try:
+            query_job = self.client.query(query, job_config=job_config)
+            results = list(query_job.result())
+            
+            balances = {}
+            for r in results:
+                cleaned_acc = r.conta.strip()
+                balances[cleaned_acc] = float(r.val) if r.val is not None else 0.0
+            return balances
+        except Exception as e:
+            logger.error(f"Error querying BI individual account balances: {e}")
+            raise
+
+    def get_balancete_mapped_accounts_balances(self, uaid: str) -> list:
+        """
+        Retrieves all mapped analytical accounts, their balances, and their movements in BALANCETE_ERP for a given UAID,
+        along with the mapped standard account code (conta_para).
+        """
+        logger.info(f"Querying mapped accounts and balances in BALANCETE_ERP for UAID {uaid}")
+        query = """
+        SELECT DISTINCT 
+            b.CONTA as conta, 
+            b.DESCRICAO as descricao, 
+            b.SALDO_ATUAL as saldo_atual,
+            b.MOV_PERIODO as movimentacao,
+            dp.conta_para as conta_para
+        FROM `bi-performance.BI_PROD.BALANCETE_ERP` b
+        JOIN (
+            SELECT DISTINCT REPLACE(conta_de, ".0", "") as conta_de, REPLACE(conta_para, ".0", "") as conta_para, cnpj
+            FROM `bi-performance.BI_PROD.plano_dp`
+            WHERE conta_de <> "" AND conta_de IS NOT NULL AND LENGTH(conta_para) = 9
+        ) dp ON b.CONTA = dp.conta_de AND b.CNPJ = dp.cnpj
+        WHERE b.uaid = @uaid
+        """
+        job_config = bigquery.QueryJobConfig(
+            query_parameters=[
+                bigquery.ScalarQueryParameter("uaid", "STRING", uaid)
+            ]
+        )
+        try:
+            query_job = self.client.query(query, job_config=job_config)
+            results = list(query_job.result())
+            return [
+                {
+                    "conta": r.conta.strip(),
+                    "descricao": r.descricao,
+                    "saldo_atual": float(r.saldo_atual) if r.saldo_atual is not None else 0.0,
+                    "movimentacao": float(r.movimentacao) if r.movimentacao is not None else 0.0,
+                    "conta_para": r.conta_para.strip() if r.conta_para else ""
+                }
+                for r in results
+            ]
+        except Exception as e:
+            logger.error(f"Error querying mapped accounts and balances: {e}")
             raise

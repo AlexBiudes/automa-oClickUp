@@ -110,3 +110,77 @@ class AssertionEngine:
             "success": global_success,
             "assertions": assertions
         }
+
+    def validate_conta_a_conta(self, uaid: str, cnpj: str, data_base: str) -> dict:
+        """
+        Validates account balances one by one.
+        Compares the balance of each mapped analytical account in BALANCETE_ERP with
+        the corresponding account balance in the VIZ_BALANCETE_AUTO_BI_NEW view.
+        """
+        logger.info(f"Starting account-by-account validation for UAID: {uaid}")
+        bi_view = self.spec_interpreter.get_bi_view()
+        
+        try:
+            # 1. Get BI account balances
+            bi_balances = self.bq_client.get_bi_accounts_balances(cnpj, data_base, bi_view)
+            
+            # 2. Get local mapped account balances
+            local_accounts = self.bq_client.get_balancete_mapped_accounts_balances(uaid)
+            
+            divergences = []
+            passed_count = 0
+            
+            tolerance = 0.05
+            
+            for acc in local_accounts:
+                conta = acc["conta"]
+                desc = acc["descricao"]
+                conta_para = acc.get("conta_para", "")
+                
+                # Check if it's a DRE account (standard accounts starting with 3, 4, 5, etc.)
+                # Accounts starting with 1 (Ativo) and 2 (Passivo/PL) are Balance Sheet (BS) accounts.
+                if conta_para and not (conta_para.startswith("1") or conta_para.startswith("2")):
+                    val_local = acc["movimentacao"]
+                else:
+                    val_local = acc["saldo_atual"]
+                
+                # Check if this account exists in BI
+                val_bi = bi_balances.get(conta, 0.0)
+                
+                # Compare absolute values since BI view applies sign multipliers (1 or -1)
+                diff = abs(abs(val_local) - abs(val_bi))
+                if diff > tolerance:
+                    logger.warning(
+                        f"Account-by-account divergence on '{conta}' ({desc}): "
+                        f"Local={val_local:.2f}, BI={val_bi:.2f}, Diff={diff:.2f}"
+                    )
+                    divergences.append({
+                        "conta": conta,
+                        "descricao": desc,
+                        "valor_local": val_local,
+                        "valor_bi": val_bi,
+                        "diferenca": diff
+                    })
+                else:
+                    passed_count += 1
+                    
+            success = len(divergences) == 0
+            if success:
+                logger.info(f"Account-by-account validation PASSED. All {passed_count} accounts match.")
+            else:
+                logger.warning(f"Account-by-account validation FAILED. Found {len(divergences)} divergences.")
+                
+            return {
+                "success": success,
+                "passed_count": passed_count,
+                "divergences": divergences
+            }
+            
+        except Exception as e:
+            logger.error(f"Error in account-by-account validation: {e}")
+            return {
+                "success": False,
+                "passed_count": 0,
+                "error": str(e),
+                "divergences": []
+            }

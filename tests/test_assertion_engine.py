@@ -56,5 +56,38 @@ class TestAssertionEngine(unittest.TestCase):
         self.assertEqual(res["assertions"][0]["valor_balancete"], 100.00)
         self.assertEqual(res["assertions"][0]["diferenca"], 20.0)
 
+    def test_validate_conta_a_conta(self):
+        """Tests that account-by-account validation correctly handles DRE (movimentacao) and signs."""
+        # BI account balances (with sign multipliers)
+        self.bq_mock.get_bi_accounts_balances.return_value = {
+            "110401": 100.00,  # BS: matches local saldo_atual
+            "310101": -50.00,  # DRE: matches local absolute movimentacao
+        }
+        
+        # Local mapped account balances (raw from BALANCETE_ERP)
+        self.bq_mock.get_balancete_mapped_accounts_balances.return_value = [
+            {
+                "conta": "110401",
+                "descricao": "Estoque",
+                "saldo_atual": 100.00,
+                "movimentacao": 0.00,
+                "conta_para": "114010001"
+            },
+            {
+                "conta": "310101",
+                "descricao": "Receita de Vendas",
+                "saldo_atual": 0.00,
+                "movimentacao": 50.00,
+                "conta_para": "311010001"
+            }
+        ]
+        
+        engine = AssertionEngine(self.bq_mock, self.spec_mock)
+        res = engine.validate_conta_a_conta("test-uaid", "test-cnpj", "2026-02")
+        
+        self.assertTrue(res["success"])
+        self.assertEqual(res["passed_count"], 2)
+        self.assertEqual(len(res["divergences"]), 0)
+
 if __name__ == '__main__':
     unittest.main()
